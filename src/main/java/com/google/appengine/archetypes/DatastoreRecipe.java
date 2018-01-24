@@ -62,8 +62,6 @@ public class DatastoreRecipe extends HttpServlet{
 		Datastore datastore = DatastoreOptions.getDefaultInstance().getService();
 		QueryResults<Entity> recipesData = datastore.run(query);
 
-		
-		
 		System.out.println(recipesData.hasNext());
 		
 		try {

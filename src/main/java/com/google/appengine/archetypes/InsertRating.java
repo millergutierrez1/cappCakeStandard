@@ -11,6 +11,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.google.appengine.api.datastore.*;
+import com.google.appengine.api.datastore.Query.Filter;
+import com.google.appengine.api.datastore.Query.FilterOperator;
+import com.google.appengine.api.datastore.Query.FilterPredicate;
+
+import com.google.appengine.api.search.query.ExpressionParser.negation_return;
 import com.google.cloud.datastore.FullEntity;
 import com.google.gson.Gson;
 
@@ -63,16 +68,22 @@ public class InsertRating extends HttpServlet {
 
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
-		Key recipekey = KeyFactory.createKey("Recipes", r.getKey().toString());
+		
+		
+		String recipekey = KeyFactory.createKeyString("Recipes", r.getKey());
+		
+		//System.out.println("ID: Recipe "+r.getId());
+		
+		Key key = KeyFactory.stringToKey(recipekey);
 		
 		Entity updatedRecipe;
 		try {
 			System.out.println(recipekey);
-			updatedRecipe = datastore.get(recipekey);
-			updatedRecipe.setProperty("ranking", r.getRanking() / r.getRanking_count());
+			updatedRecipe = datastore.get(key);
+			updatedRecipe.setProperty("ranking", r.getRanking());
 			updatedRecipe.setProperty("ranking_count", r.getRanking_count());
 
-			// System.out.println(newRecipe);
+			// System.out.println(newRecipe);getKey().toString(
 
 			Transaction txn = datastore.beginTransaction();
 			try {
