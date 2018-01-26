@@ -10,13 +10,15 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import com.google.appengine.api.datastore.*;
-import com.google.appengine.api.datastore.Query.Filter;
-import com.google.appengine.api.datastore.Query.FilterOperator;
-import com.google.appengine.api.datastore.Query.FilterPredicate;
+
 
 import com.google.appengine.api.search.query.ExpressionParser.negation_return;
+import com.google.cloud.datastore.Datastore;
+import com.google.cloud.datastore.DatastoreOptions;
+import com.google.cloud.datastore.Entity;
 import com.google.cloud.datastore.FullEntity;
+import com.google.cloud.datastore.Key;
+import com.google.cloud.datastore.KeyFactory;
 import com.google.gson.Gson;
 
 /**
@@ -66,7 +68,21 @@ public class InsertRating extends HttpServlet {
 		log.log(Level.INFO, String
 				.valueOf("Ranking: " + r.getRanking() / r.getRanking_count() + ". Votos: " + r.getRanking_count()));
 
-		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		
+		Datastore datastore = DatastoreOptions.getDefaultInstance().getService();
+		
+		
+		KeyFactory keyFactory = datastore.newKeyFactory().setKind("Recipes");
+		Key key = keyFactory.newKey(r.getKey());
+		//Entity updatedRecipe = Entity.newBuilder(key).set("ranking", r.getRanking()).set("ranking_count", r.getRanking_count()).build();
+		
+
+		Entity test2 = Entity.newBuilder(datastore.get(key)).set("ranking", r.getRanking()).set("ranking_count", r.getRanking_count()).build();
+		
+		datastore.update(test2);
+		
+		
+		/*DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
 		
 		
@@ -101,7 +117,7 @@ public class InsertRating extends HttpServlet {
 			}
 		} catch (EntityNotFoundException e) {
 			Logger.getLogger(InsertRating.class.getName()).log(Level.SEVERE, null, e);
-		}
+		}*/
 
 		response.setStatus(200);// new Entity("Recipes",key);
 
