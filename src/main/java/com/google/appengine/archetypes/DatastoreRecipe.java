@@ -143,10 +143,11 @@ public class DatastoreRecipe extends HttpServlet{
 			}
 					
 		} catch(DatastoreException e) {
-			log.log(Level.SEVERE, null, e);
+			
+			log.log(Level.SEVERE, String.valueOf(itmr.getTitle()+" - "+itmr.getId()), e);
 
 		} catch(ClassCastException e) {
-			log.log(Level.SEVERE, null, e);
+			log.log(Level.SEVERE, String.valueOf(itmr.getTitle()+" - "+itmr.getId()), e);
 			
 		}
 		
