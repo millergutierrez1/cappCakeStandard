@@ -75,8 +75,15 @@ public class Signin extends HttpServlet{
 		LoginInfo dataHttp = gson.fromJson(sb.toString(), LoginInfo.class);
 		
 		
+		
+		
 		try {
+			
+			/*
 			if(signin(dataHttp.getUser(), dataHttp.getPassword())) {
+				
+				
+				
 				PrintWriter pw = resp.getWriter();
 				resp.setContentType("text/plain");
 				resp.setStatus(200);
@@ -87,8 +94,23 @@ public class Signin extends HttpServlet{
 				PrintWriter pw = resp.getWriter();
 				resp.setContentType("text/plain");
 				resp.setStatus(200);
+				
 				pw.println("LoggedIn: False");
-			}
+				*/
+			
+			if(monitor.userLogin(dataHttp.getUser(), dataHttp.getPassword())) {
+				PrintWriter pw = resp.getWriter();
+				resp.setContentType("text/plain");
+				resp.setStatus(200);
+				pw.println("LoggedIn: True");
+				
+			}else {
+				PrintWriter pw = resp.getWriter();
+				resp.setContentType("text/plain");
+				resp.setStatus(200);
+				
+				pw.println("LoggedIn: False");}
+			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

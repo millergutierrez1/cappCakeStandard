@@ -1,5 +1,9 @@
 package com.google.appengine.archetypes;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -16,6 +20,9 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.xml.bind.DatatypeConverter;
+
+import com.google.cloud.sql.jdbc.internal.DataTypeConverter;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.mysql.cj.api.log.Log;
@@ -179,6 +186,64 @@ public class DbConnection {
 		return null;	
 	}
 	
+	public boolean userLogin(String user,String pass) throws SQLException{
+		Logger.getLogger("user"+user);
+		Connection con = sync();
+		
+		try {
+			
+			if(userExists(user)) {
+				Profile p = new Profile();
+				String query = "select * from profile where user= ? ";
+				PreparedStatement queryFinal = con.prepareStatement(query);
+				queryFinal.setString(1, user.trim());
+				ResultSet result = queryFinal.executeQuery();
+				
+				if (result.next()) {
+
+					p.setName(result.getString("name"));
+					p.setEmail(result.getString("email"));
+					p.setDateOfBirth(result.getString("date_birth"));
+					p.setPassword(result.getString("password"));
+					p.setUser(result.getString("user"));
+					Logger.getLogger("Profile"+p.toString());
+					syncOff();
+					queryFinal.close();
+					
+		           
+		        }
+				
+				//take password should come with-hash
+				String[] hashPassword = p.getPassword().trim().split("#");
+
+				/*System.out.println("Password: "+p.getPassword());
+				
+				System.out.println("hash64:"+hashPassword[1]);
+				*/
+				
+				byte[] parseSalt = DatatypeConverter.parseBase64Binary(hashPassword[1]);
+				
+				String compareHash = get_SHA_256_SecurePassword(pass, parseSalt);
+				
+				/*System.out.println(compareHash.trim());
+				System.out.println(hashPassword[0].trim());
+				*/
+				if(compareHash.trim().equals(hashPassword[0].trim())) {
+					Logger.getLogger(DbConnection.class.getName()).log(Level.INFO, "Hash Confirmed");
+					syncOff();
+					return true;
+				}
+					
+			}
+			
+		}finally {
+			syncOff();
+			
+		}
+		
+		return false;	
+	}
+	
 	public boolean emailExists(String email) throws SQLException {
 		Connection con = sync();
 		String query = "select * from profile where email= ? ";
@@ -192,5 +257,37 @@ public class DbConnection {
 		syncOff();
 		return exists;
 	}
+	
+	private static String get_SHA_256_SecurePassword(String passwordToHash, byte[] salt)
+    {
+        String generatedPassword = null;
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            md.update(salt);
+            byte[] bytes = md.digest(passwordToHash.getBytes());
+            StringBuilder sb = new StringBuilder();
+            for(int i=0; i< bytes.length ;i++)
+            {
+                sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
+            }
+            generatedPassword = sb.toString();
+        }
+        catch (NoSuchAlgorithmException e)
+        {
+            e.printStackTrace();
+        }
+        return generatedPassword;
+    }
+
+    private static byte[] getSalt() throws NoSuchAlgorithmException
+    {
+        SecureRandom sr = SecureRandom.getInstance("SHA1PRNG");
+        byte[] salt = new byte[16];
+        sr.nextBytes(salt);
+
+        return salt;
+    }
+	
+	
 
 }
