@@ -10,11 +10,25 @@ public class Profile {
 	    private String dateOfBirth;
 	    private String user;
 	    private int id;
+	    private String recipeIds;
 
 	    public Profile() {
 	    }
+	    
 
-	    public Profile(String name, String email, String password, String dateOfBirth, String user) {
+	    public String getRecipeIds() {
+			return recipeIds;
+		}
+
+
+
+		public void setRecipeIds(String recipeIds) {
+			this.recipeIds = recipeIds;
+		}
+
+
+
+		public Profile(String name, String email, String password, String dateOfBirth, String user) {
 	        this.name = name;
 	        this.email = email;
 	        this.password = password;
@@ -83,6 +97,8 @@ public class Profile {
 	        return gson.toJson(this);
 	    }
 	    
+	
+	    
 	    
 
 	    public String getName() {
@@ -108,4 +124,5 @@ public class Profile {
 	    public void setDateOfBirth(String dateOfBirth) {
 	        this.dateOfBirth = dateOfBirth;
 	    }
+	    
 	}

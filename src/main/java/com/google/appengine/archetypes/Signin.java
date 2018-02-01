@@ -40,6 +40,7 @@ public class Signin extends HttpServlet{
 	
 	DbConnection monitor = new DbConnection();
 	Profile p;
+	Gson gson = new Gson();
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -70,7 +71,7 @@ public class Signin extends HttpServlet{
 
 		//System.out.println("HTTP string:"+ sb.toString());
 		
-		Gson gson = new Gson();
+
 		
 		LoginInfo dataHttp = gson.fromJson(sb.toString(), LoginInfo.class);
 		
@@ -99,10 +100,16 @@ public class Signin extends HttpServlet{
 				*/
 			
 			if(monitor.userLogin(dataHttp.getUser(), dataHttp.getPassword())) {
+				
+				p=gson.fromJson(monitor.userData(dataHttp.getUser()),Profile.class);
+				LoginInfo l = new LoginInfo();
+				l.setRecipe_id(p.getRecipeIds());
+				
 				PrintWriter pw = resp.getWriter();
 				resp.setContentType("text/plain");
 				resp.setStatus(200);
-				pw.println("LoggedIn: True");
+				pw.println("LoggedIn: True +");
+				pw.println(l.toString());
 				
 			}else {
 				PrintWriter pw = resp.getWriter();
@@ -176,17 +183,31 @@ public class Signin extends HttpServlet{
 		
 	}
 	
-	 public class LoginInfo {
+	 public static class LoginInfo {
 
 	        private String user;
 	        private String password;
+	        private String recipe_id;
 
 	        public LoginInfo(String user, String password) {
 	            this.user = user;
 	            this.password = password;
 	        }
+	        
 
-	        public LoginInfo(){
+	        public String getRecipe_id() {
+				return recipe_id;
+			}
+
+
+
+			public void setRecipe_id(String recipe_id) {
+				this.recipe_id = recipe_id;
+			}
+
+
+
+			public LoginInfo(){
 
 	        }
 
@@ -204,6 +225,14 @@ public class Signin extends HttpServlet{
 
 	        public void setPassword(String password) {
 	            this.password = password;
+	        }
+	        
+	        @Override
+	        public String toString() {
+	        // TODO Auto-generated method stub
+	        Gson gson = new Gson();
+	        	
+	        return gson.toJson(this);
 	        }
 	    }
 	

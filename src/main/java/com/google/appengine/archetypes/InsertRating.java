@@ -57,7 +57,6 @@ public class InsertRating extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		doGet(request, response);
 
 		BufferedReader br = new BufferedReader(new InputStreamReader(request.getInputStream()));
 		StringBuilder sb = new StringBuilder(br.readLine());

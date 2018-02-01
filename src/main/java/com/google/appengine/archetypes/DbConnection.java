@@ -22,6 +22,7 @@ import java.util.logging.Logger;
 
 import javax.xml.bind.DatatypeConverter;
 
+import com.google.appengine.archetypes.Signin.LoginInfo;
 import com.google.cloud.sql.jdbc.internal.DataTypeConverter;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -139,6 +140,24 @@ public class DbConnection {
 		return exists;
 		
 	}
+	
+	public boolean insertRecipeIds(Profile user) throws SQLException {
+		Connection con = sync();
+		String query = "update profile set recipe_id=? where user=?";
+		
+		PreparedStatement ps = con.prepareStatement(query);
+		ps.setString(1, user.getRecipeIds());
+		ps.setString(2, user.getUser());
+		
+		ps.executeUpdate();
+		ps.close();
+		syncOff();
+		
+		return true;
+		
+		
+		
+	}
 
 	public boolean userExists(String user) throws SQLException {
 		Connection con = sync();
@@ -172,6 +191,7 @@ public class DbConnection {
 				p.setDateOfBirth(result.getString("date_birth"));
 				p.setPassword(result.getString("password"));
 				p.setUser(result.getString("user"));
+				p.setRecipeIds(result.getString("recipe_id"));
 				Logger.getLogger("Profile"+p.toString());
 				syncOff();
 				queryFinal.close();
@@ -242,6 +262,17 @@ public class DbConnection {
 		}
 		
 		return false;	
+	}
+	
+	public LoginInfo loginData(Profile p) {
+		
+		LoginInfo l = new LoginInfo();
+		
+		l.setUser(p.getUser());
+		l.setRecipe_id(p.getRecipeIds());
+		
+		return l;
+		
 	}
 	
 	public boolean emailExists(String email) throws SQLException {
