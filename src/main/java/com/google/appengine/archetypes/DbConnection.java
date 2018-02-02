@@ -173,6 +173,32 @@ public class DbConnection {
 		return exists;
 	}
 	
+	public String recipesPerUser(String user) throws SQLException {
+		Connection con = sync();
+		String recipesList = "";
+		System.out.println("User:"+user);
+
+		String query = "select * from profile where user= ?";
+		PreparedStatement queryFinal = con.prepareStatement(query);
+		queryFinal.setString(1, user.trim());
+		System.out.println(queryFinal);
+		
+		ResultSet result = queryFinal.executeQuery();
+		
+		if(result.next()){
+			recipesList = result.getString("recipe_id");
+		}
+		if(recipesList==null) {
+			recipesList="";
+		}
+		System.out.println("Recipes: "+recipesList);
+
+		syncOff();
+		return recipesList;
+		
+		
+	}
+	
 	public String userData(String user) throws SQLException{
 		Logger.getLogger("user"+user);
 		Connection con = sync();
