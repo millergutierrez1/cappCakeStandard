@@ -65,7 +65,7 @@ public class InsertProfileRecipes extends HttpServlet {
 			user=gson.fromJson(monitor.userData(userRecipe.getName()),Profile.class);
 			
 			System.out.println(user);
-			if(user.getRecipeIds()!=null) {
+			if(user.getRecipeIds()!=null ||user.getRecipeIds()=="") {
 				user.setRecipeIds(user.getRecipeIds()+"-"+userRecipe.getId());
 			} else {
 				user.setRecipeIds(userRecipe.getId());
@@ -73,6 +73,7 @@ public class InsertProfileRecipes extends HttpServlet {
 			
 			if(monitor.insertRecipeIds(user)) {
 				response.setStatus(200);
+				response.getWriter().println("recipeSaved");
 			} else {
 				response.setStatus(404);
 				response.getWriter().println("User_not_Found");

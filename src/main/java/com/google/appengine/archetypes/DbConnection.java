@@ -17,6 +17,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -34,6 +35,9 @@ import com.mysql.cj.api.log.Log;
  */
 public class DbConnection {
 	private Connection con;
+	String url = "jdbc:mysql://35.226.202.177:3306/cappcakedb"; // Starts connection.
+	String usr = "mgutierrez"; 
+	String pass = "root"; 
 
 	/*
 	 * Connection performed to mysql
@@ -44,10 +48,15 @@ public class DbConnection {
 
 			// Generate sql connection
 			Class.forName("com.mysql.cj.jdbc.Driver");
-			String url = "jdbc:mysql://35.226.202.177:3306/cappcakedb"; // Starts connection.
-			String usr = "mgutierrez"; 
-			String pass = "root"; 
-			con = DriverManager.getConnection(url, usr, pass);
+
+			
+			Properties properties = new Properties();
+			properties.setProperty("user", usr);
+			properties.setProperty("password", pass);
+			properties.setProperty("useSSL", "false");
+
+			con = DriverManager.getConnection(url,properties);
+			
 			
 		} catch (ClassNotFoundException ex) {
 			Logger.getLogger(DbConnection.class.getName()).log(Level.SEVERE, null, ex);
