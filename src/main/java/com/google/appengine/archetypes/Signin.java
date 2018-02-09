@@ -108,6 +108,7 @@ public class Signin extends HttpServlet{
 				PrintWriter pw = resp.getWriter();
 				resp.setContentType("text/plain");
 				resp.setStatus(200);
+				Logger.getLogger(Signin.class.getName()).log(Level.INFO, "user "+dataHttp.getUser()+" loggedin");
 				pw.println("LoggedIn: True +");
 				pw.println(l.toString());
 				
@@ -115,7 +116,7 @@ public class Signin extends HttpServlet{
 				PrintWriter pw = resp.getWriter();
 				resp.setContentType("text/plain");
 				resp.setStatus(200);
-				
+				Logger.getLogger(Signin.class.getName()).log(Level.INFO, "User not found");
 				pw.println("LoggedIn: False");}
 			
 		} catch (SQLException e) {
