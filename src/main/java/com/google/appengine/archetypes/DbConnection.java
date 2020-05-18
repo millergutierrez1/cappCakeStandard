@@ -36,8 +36,8 @@ import com.mysql.cj.api.log.Log;
 public class DbConnection {
 	private Connection con;
 	String url = "jdbc:mysql://35.226.202.177:3306/cappcakedb"; // Starts connection.
-	String usr = "mgutierrez"; 
-	String pass = "root"; 
+	String usr; 
+	String pass; 
 
 	/*
 	 * Connection performed to mysql
